@@ -7,5 +7,5 @@ dependencies:
   server:
     ChestShop:
       join-classpath: true
-      load: OMIT
+      load: BEFORE
       required: true

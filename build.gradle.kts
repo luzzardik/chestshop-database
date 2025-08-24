@@ -42,6 +42,14 @@ tasks {
         // This is the only required configuration besides applying the plugin.
         // Your plugin"s jar (or shadowJar if present) will be used automatically.
         minecraftVersion("1.21.8")
+        downloadPlugins {
+            // Chestshop #445
+            url("https://ci.minebench.de/job/ChestShop-3/445/artifact/target/ChestShop.jar")
+            // EssX
+            url("https://ci.ender.zone/job/EssentialsX/lastSuccessfulBuild/artifact/jars/EssentialsX-2.22.0-dev+19-7bc91f1.jar")
+            // Vault
+            url("https://mediafilez.forgecdn.net/files/3007/470/Vault.jar")
+        }
     }
 }
 
