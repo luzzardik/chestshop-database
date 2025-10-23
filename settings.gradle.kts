@@ -1,1 +1,1 @@
-rootProject.name = "chestshop-finder"
+rootProject.name = "chestshop-database"

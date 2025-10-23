@@ -1,10 +1,10 @@
-package io.github.md5sha256.chestshopFinder.listener;
+package io.github.md5sha256.chestshopdatabase.listener;
 
 import com.Acrobot.ChestShop.Signs.ChestShopSign;
 import com.Acrobot.ChestShop.Utils.uBlock;
-import io.github.md5sha256.chestshopFinder.ItemDiscoverer;
-import io.github.md5sha256.chestshopFinder.database.ChestShopDatabase;
-import io.github.md5sha256.chestshopFinder.util.BlockPosition;
+import io.github.md5sha256.chestshopdatabase.ItemDiscoverer;
+import io.github.md5sha256.chestshopdatabase.database.ChestShopDatabase;
+import io.github.md5sha256.chestshopdatabase.util.BlockPosition;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Server;

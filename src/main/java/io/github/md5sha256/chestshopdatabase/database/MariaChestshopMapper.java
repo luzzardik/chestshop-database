@@ -1,7 +1,7 @@
-package io.github.md5sha256.chestshopFinder.database;
+package io.github.md5sha256.chestshopdatabase.database;
 
-import io.github.md5sha256.chestshopFinder.model.Shop;
-import io.github.md5sha256.chestshopFinder.model.ShopType;
+import io.github.md5sha256.chestshopdatabase.model.Shop;
+import io.github.md5sha256.chestshopdatabase.model.ShopType;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;

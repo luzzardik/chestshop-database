@@ -1,6 +1,6 @@
-name: chestshop-finder
+name: chestshop-database
 version: '${version}'
-main: io.github.md5sha256.chestshopFinder.ChestshopFinderPlugin
+main: io.github.md5sha256.chestshopdatabase.ChestshopDatabasePlugin
 api-version: '1.21.8'
 authors: [ md5sha256 ]
 dependencies:

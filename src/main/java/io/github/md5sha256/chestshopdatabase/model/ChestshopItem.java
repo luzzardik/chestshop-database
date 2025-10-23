@@ -1,4 +1,4 @@
-package io.github.md5sha256.chestshopFinder.model;
+package io.github.md5sha256.chestshopdatabase.model;
 
 import org.bukkit.inventory.ItemStack;
 

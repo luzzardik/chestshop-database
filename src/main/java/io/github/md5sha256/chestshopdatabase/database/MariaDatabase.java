@@ -1,4 +1,4 @@
-package io.github.md5sha256.chestshopFinder.database;
+package io.github.md5sha256.chestshopdatabase.database;
 
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.mapping.Environment;

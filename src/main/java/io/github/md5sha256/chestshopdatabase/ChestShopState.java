@@ -1,10 +1,10 @@
-package io.github.md5sha256.chestshopFinder;
+package io.github.md5sha256.chestshopdatabase;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import io.github.md5sha256.chestshopFinder.database.DatabaseInterface;
-import io.github.md5sha256.chestshopFinder.model.HydratedShop;
-import io.github.md5sha256.chestshopFinder.util.BlockPosition;
+import io.github.md5sha256.chestshopdatabase.database.DatabaseInterface;
+import io.github.md5sha256.chestshopdatabase.model.HydratedShop;
+import io.github.md5sha256.chestshopdatabase.util.BlockPosition;
 
 import javax.annotation.Nonnull;
 import java.time.Duration;

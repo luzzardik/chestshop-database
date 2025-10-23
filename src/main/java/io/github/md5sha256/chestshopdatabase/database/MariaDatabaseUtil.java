@@ -1,6 +1,6 @@
-package io.github.md5sha256.chestshopFinder.database;
+package io.github.md5sha256.chestshopdatabase.database;
 
-import io.github.md5sha256.chestshopFinder.model.ShopType;
+import io.github.md5sha256.chestshopdatabase.model.ShopType;
 import org.apache.ibatis.jdbc.SQL;
 
 import javax.annotation.Nonnull;

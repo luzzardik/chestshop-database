@@ -1,10 +1,10 @@
-package io.github.md5sha256.chestshopFinder.database;
+package io.github.md5sha256.chestshopdatabase.database;
 
-import io.github.md5sha256.chestshopFinder.model.ChestshopItem;
-import io.github.md5sha256.chestshopFinder.model.HydratedShop;
-import io.github.md5sha256.chestshopFinder.model.Shop;
-import io.github.md5sha256.chestshopFinder.model.ShopType;
-import io.github.md5sha256.chestshopFinder.util.BlockPosition;
+import io.github.md5sha256.chestshopdatabase.model.ChestshopItem;
+import io.github.md5sha256.chestshopdatabase.model.HydratedShop;
+import io.github.md5sha256.chestshopdatabase.model.Shop;
+import io.github.md5sha256.chestshopdatabase.model.ShopType;
+import io.github.md5sha256.chestshopdatabase.util.BlockPosition;
 import org.apache.ibatis.annotations.Flush;
 
 import javax.annotation.Nonnull;

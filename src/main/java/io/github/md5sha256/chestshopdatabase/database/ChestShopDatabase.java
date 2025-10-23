@@ -1,20 +1,18 @@
-package io.github.md5sha256.chestshopFinder.database;
+package io.github.md5sha256.chestshopdatabase.database;
 
 import com.Acrobot.Breeze.Utils.PriceUtil;
 import com.Acrobot.ChestShop.Signs.ChestShopSign;
-import io.github.md5sha256.chestshopFinder.ChestShopState;
-import io.github.md5sha256.chestshopFinder.model.ChestshopItem;
-import io.github.md5sha256.chestshopFinder.model.HydratedShop;
-import io.github.md5sha256.chestshopFinder.util.BlockPosition;
-import io.github.md5sha256.chestshopFinder.util.InventoryUtil;
+import io.github.md5sha256.chestshopdatabase.ChestShopState;
+import io.github.md5sha256.chestshopdatabase.model.ChestshopItem;
+import io.github.md5sha256.chestshopdatabase.model.HydratedShop;
+import io.github.md5sha256.chestshopdatabase.util.BlockPosition;
+import io.github.md5sha256.chestshopdatabase.util.InventoryUtil;
 import org.bukkit.block.Container;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Iterator;
 
 public record ChestShopDatabase(@Nonnull ChestShopState shopState) {
 

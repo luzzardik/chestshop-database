@@ -1,6 +1,6 @@
-package io.github.md5sha256.chestshopFinder.model;
+package io.github.md5sha256.chestshopdatabase.model;
 
-import io.github.md5sha256.chestshopFinder.util.BlockPosition;
+import io.github.md5sha256.chestshopdatabase.util.BlockPosition;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

@@ -1,4 +1,4 @@
-package io.github.md5sha256.chestshopFinder.listener;
+package io.github.md5sha256.chestshopdatabase.listener;
 
 import com.Acrobot.Breeze.Utils.PriceUtil;
 import com.Acrobot.ChestShop.Events.ChestShopReloadEvent;
@@ -7,13 +7,13 @@ import com.Acrobot.ChestShop.Events.ShopDestroyedEvent;
 import com.Acrobot.ChestShop.Events.TransactionEvent;
 import com.Acrobot.ChestShop.Signs.ChestShopSign;
 import com.Acrobot.ChestShop.Utils.uBlock;
-import io.github.md5sha256.chestshopFinder.ChestShopState;
-import io.github.md5sha256.chestshopFinder.ItemDiscoverer;
-import io.github.md5sha256.chestshopFinder.model.ChestshopItem;
-import io.github.md5sha256.chestshopFinder.model.HydratedShop;
-import io.github.md5sha256.chestshopFinder.util.BlockPosition;
-import io.github.md5sha256.chestshopFinder.util.InventoryUtil;
-import io.github.md5sha256.chestshopFinder.util.UnsafeChestShopSign;
+import io.github.md5sha256.chestshopdatabase.ChestShopState;
+import io.github.md5sha256.chestshopdatabase.ItemDiscoverer;
+import io.github.md5sha256.chestshopdatabase.model.ChestshopItem;
+import io.github.md5sha256.chestshopdatabase.model.HydratedShop;
+import io.github.md5sha256.chestshopdatabase.util.BlockPosition;
+import io.github.md5sha256.chestshopdatabase.util.InventoryUtil;
+import io.github.md5sha256.chestshopdatabase.util.UnsafeChestShopSign;
 import org.bukkit.block.Container;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
