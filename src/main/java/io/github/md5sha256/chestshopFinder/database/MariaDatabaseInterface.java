@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 import java.nio.ByteBuffer;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,34 +20,41 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-public class SqliteDatabaseInterface implements DatabaseInterface {
-
+public class MariaDatabaseInterface implements DatabaseInterface {
 
     private static final String CREATE_ITEMS = """
             CREATE TABLE Items (
-                item_id INTEGER PRIMARY KEY,
-                item_code TEXT NOT NULL,
+                item_id INT AUTO_INCREMENT PRIMARY KEY,
+                item_code VARCHAR(255) NOT NULL,
                 item_bytes BLOB NOT NULL
             );
             """;
 
     private static final String CREATE_SHOP = """
             CREATE TABLE Shop (
-                shop_id INTEGER PRIMARY KEY,
-                world_uuid BLOB NOT NULL CHECK (length(item_uuid) = 16),
-                pos_x INTEGER NOT NULL,
-                pos_y INTEGER NOT NULL,
-                pos_z INTEGER NOT NULL,
-                item_id INTEGER NOT NULL,
-                owner_name TEXT,
-                buy_price REAL,
-                sell_price REAL,
-                quantity INTEGER NOT NULL,
-                last_updated DATETIME DEFAULT (unixepoch()),
-                CHECK (buy_price IS NOT NULL OR sell_price IS NOT NULL),
-                CHECK (quantity > 0),
-                FOREIGN KEY (item_id) REFERENCES Items(item_id) ON DELETE CASCADE
+                shop_id INT AUTO_INCREMENT PRIMARY KEY,
+                world_uuid UUID NOT NULL,
+                pos_x INT NOT NULL,
+                pos_y INT NOT NULL,
+                pos_z INT NOT NULL,
+                item_id INT NOT NULL,
+                owner_name VARCHAR(255),
+                buy_price DECIMAL(10, 2),
+                sell_price DECIMAL(10, 2),
+                quantity INT NOT NULL,
+                last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
+            """;
+
+    private static final String CREATE_SHOP_CONSTRAINTS = """
+            ALTER TABLE Shop
+            ADD CONSTRAINT chk_price_not_null
+                CHECK (buy_price IS NOT NULL OR sell_price IS NOT NULL)
+            ADD CONSTRAINT chk_quantity_greater_than_zero
+                CHECK (quantity > 0),
+            ADD CONSTRAINT fk_shop_item_item_id
+                FOREIGN KEY (item_id) REFERENCES Items(item_id) ON DELETE CASCADE
+            ;
             """;
 
     private static final String CREATE_SHOP_DELETE_ORPHANED_ITEM_TRIGGER = """
@@ -188,29 +196,6 @@ public class SqliteDatabaseInterface implements DatabaseInterface {
                 buy_price IS NOT NULL AND world_uuid = ? AND item_id = ?
             """;
 
-    /**
-     * Convert a UUID to a 16-byte array.
-     */
-    public static byte[] toBytes(UUID uuid) {
-        ByteBuffer buffer = ByteBuffer.allocate(16);
-        buffer.putLong(uuid.getMostSignificantBits());
-        buffer.putLong(uuid.getLeastSignificantBits());
-        return buffer.array();
-    }
-
-    /**
-     * Convert a 16-byte array back to a UUID.
-     */
-    public static UUID fromBytes(byte[] bytes) {
-        if (bytes.length != 16) {
-            throw new IllegalArgumentException("Invalid UUID byte array length: " + bytes.length);
-        }
-        ByteBuffer buffer = ByteBuffer.wrap(bytes);
-        long high = buffer.getLong();
-        long low = buffer.getLong();
-        return new UUID(high, low);
-    }
-
     @Override
     public void initializeDatabase(@Nonnull Connection connection) throws SQLException {
         try (Statement statement = connection.createStatement()) {
@@ -246,13 +231,9 @@ public class SqliteDatabaseInterface implements DatabaseInterface {
     @Override
     public void registerShops(@Nonnull Connection connection,
                               @Nonnull List<Shop> shops) throws SQLException {
-        Map<UUID, byte[]> uuidBytes = new HashMap<>();
-        for (Shop shop : shops) {
-            uuidBytes.computeIfAbsent(shop.worldId(), SqliteDatabaseInterface::toBytes);
-        }
         try (PreparedStatement statement = connection.prepareStatement(INSERT_SHOP)) {
             for (Shop shop : shops) {
-                statement.setBytes(1, uuidBytes.get(shop.worldId()));
+                statement.setObject(1, shop.worldId());
                 statement.setInt(2, shop.posX());
                 statement.setInt(3, shop.posY());
                 statement.setInt(4, shop.posZ());
@@ -281,7 +262,7 @@ public class SqliteDatabaseInterface implements DatabaseInterface {
                            int posY,
                            int posZ) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(DELETE_SHOP_POS)) {
-            statement.setBytes(1, toBytes(world));
+            statement.setObject(1, world);
             statement.setInt(2, posX);
             statement.setInt(3, posY);
             statement.setInt(4, posZ);
@@ -311,7 +292,7 @@ public class SqliteDatabaseInterface implements DatabaseInterface {
             @Nonnull UUID world,
             int itemId) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(SELECT_ANY_SHOP_BY_WORLD_AND_ITEM)) {
-            statement.setBytes(1, toBytes(world));
+            statement.setObject(1, world);
             statement.setInt(2, itemId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
@@ -322,8 +303,8 @@ public class SqliteDatabaseInterface implements DatabaseInterface {
                     Double buyPrice = resultSet.getObject(5, Double.class);
                     Double sellPrice = resultSet.getObject(6, Double.class);
                     int quantity = resultSet.getInt(7);
-                    long lastUpdated = resultSet.getLong(8);
-                    Shop shop = new Shop(world, posX, posY, posZ, itemId, ownerName, buyPrice, sellPrice, quantity, lastUpdated);
+                    Date lastUpdated = resultSet.getDate(8);
+                    Shop shop = new Shop(world, posX, posY, posZ, itemId, ownerName, buyPrice, sellPrice, quantity, lastUpdated.toInstant().getEpochSecond());
                     return Optional.of(shop);
                 }
             }
