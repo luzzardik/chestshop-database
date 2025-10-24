@@ -10,6 +10,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 
 public class ChestShopState {
 
@@ -25,11 +27,24 @@ public class ChestShopState {
     private final Map<BlockPosition, HydratedShop> createdShops = new HashMap<>();
     private final Map<BlockPosition, HydratedShop> updatedShops = new HashMap<>();
     private final Set<BlockPosition> deletedShops = new HashSet<>();
+    private final Set<String> knownItemCodes = new HashSet<>();
 
     public ChestShopState(@Nonnull Duration shopCacheDuration) {
         this.shopCache = CacheBuilder.newBuilder()
                 .expireAfterAccess(shopCacheDuration)
                 .build();
+    }
+
+    public void cacheItemCodes(@Nonnull Logger logger, @Nonnull DatabaseInterface database) {
+        try {
+            this.knownItemCodes.addAll(database.selectItemCodes());
+        } catch (Exception ex) {
+            logger.warning("Failed to cache item codes: " + ex.getMessage());
+        }
+    }
+
+    public Set<String> itemCodes() {
+        return Collections.unmodifiableSet(this.knownItemCodes);
     }
 
     @Nullable
@@ -62,6 +77,7 @@ public class ChestShopState {
         this.updatedShops.remove(position);
         this.deletedShops.remove(position);
         this.createdShops.put(position, shop);
+        this.knownItemCodes.add(shop.item().itemCode());
         this.shopCache.put(position, Boolean.TRUE);
     }
 
@@ -71,6 +87,7 @@ public class ChestShopState {
         this.deletedShops.remove(position);
         this.updatedShops.put(position, shop);
         this.shopCache.put(position, Boolean.TRUE);
+        this.knownItemCodes.add(shop.item().itemCode());
     }
 
     public void queueShopDeletion(@Nonnull BlockPosition position) {

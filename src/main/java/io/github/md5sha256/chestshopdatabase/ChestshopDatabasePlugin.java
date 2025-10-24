@@ -40,7 +40,15 @@ public final class ChestshopDatabasePlugin extends JavaPlugin {
         getServer().getPluginManager()
                 .registerEvents(new ChestShopListener(shopState, discoverer), this);
         SqlSessionFactory sessionFactory = MariaDatabase.buildSessionFactory(getDbSettings());
+        cacheItemCodes(sessionFactory);
         scheduleTasks(sessionFactory);
+    }
+
+    private void cacheItemCodes(@Nonnull SqlSessionFactory sessionFactory) {
+        try (SqlSession session = sessionFactory.openSession()) {
+            DatabaseInterface database = session.getMapper(MariaChestshopMapper.class);
+            this.shopState.cacheItemCodes(getLogger(), database);
+        }
     }
 
     private void scheduleTasks(@Nonnull SqlSessionFactory sessionFactory) {

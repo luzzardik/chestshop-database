@@ -17,6 +17,7 @@ import java.util.UUID;
 @Mapper
 public interface MariaChestshopMapper extends DatabaseInterface {
 
+    @Override
     @Delete("""
             DELETE
             FROM Item
@@ -24,17 +25,22 @@ public interface MariaChestshopMapper extends DatabaseInterface {
                               FROM Shop
                               WHERE Shop.item_code = Item.item_code)
             """)
-    @Override
     void deleteOrphanedItems();
 
+    @Override
     @Select("""  
             INSERT INTO Item (item_code, item_bytes)
             VALUES (#{item_code}, #{item_bytes})
             ON DUPLICATE KEY UPDATE item_bytes = VALUES(item_bytes);
             """)
-    @Override
     void insertItem(@Param("item_code") String itemCode, @Param("item_bytes") byte[] itemBytes);
 
+    @Override
+    @Select("SELECT item_code FROM Item")
+    @Nonnull
+    List<String> selectItemCodes();
+
+    @Override
     @Insert("""
             INSERT INTO Shop (world_uuid,
                               pos_x,
@@ -63,7 +69,6 @@ public interface MariaChestshopMapper extends DatabaseInterface {
                                     quantity   = VALUES(quantity),
                                     stock      = VALUES(stock)
             """)
-    @Override
     void insertShop(
             @Param("world_uuid") @Nonnull UUID worldUUID,
             @Param("x") int x,
