@@ -6,7 +6,9 @@ import com.google.common.cache.CacheBuilder;
 import io.github.md5sha256.chestshopdatabase.util.TickUtil;
 import org.bukkit.Server;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import javax.annotation.Nonnull;
 import java.time.Duration;
@@ -38,14 +40,22 @@ public class ItemDiscoverer {
                 .build();
     }
 
+    public void schedulePollTask(@Nonnull Plugin plugin,
+                                 @Nonnull BukkitScheduler scheduler,
+                                 int elementsPerTick,
+                                 int intervalTicks) {
+        this.itemCodes.schedulePollTask(plugin, scheduler, elementsPerTick, intervalTicks);
+    }
+
     private void discoverItemCodes(@Nonnull List<String> itemCodes) {
         PluginManager pluginManager = this.server.getPluginManager();
         for (String code : itemCodes) {
+            this.queuedItemCodes.remove(code);
             ItemParseEvent parseEvent = new ItemParseEvent(code);
             pluginManager.callEvent(parseEvent);
             ItemStack itemStack = parseEvent.getItem();
-            triggerCallbacks(code, itemStack);
             this.cachedItemCodes.put(code, itemStack);
+            triggerCallbacks(code, itemStack);
         }
     }
 
@@ -59,14 +69,13 @@ public class ItemDiscoverer {
     public void discoverItemCode(@Nonnull String code, @Nonnull Consumer<ItemStack> callback) {
         ItemStack cached = this.cachedItemCodes.getIfPresent(code);
         if (cached != null) {
-            triggerCallbacks(code, cached);
+            callback.accept(cached);
             return;
         }
         if (this.queuedItemCodes.add(code)) {
-            this.callbacks.computeIfAbsent(code, unused -> new ArrayList<>()).add(callback);
-        } else {
             this.itemCodes.queueElement(code);
         }
+        this.callbacks.computeIfAbsent(code, unused -> new ArrayList<>()).add(callback);
     }
 
 }

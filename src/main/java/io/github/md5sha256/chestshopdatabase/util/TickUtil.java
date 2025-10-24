@@ -53,6 +53,7 @@ public class TickUtil<T> {
         return elements;
     }
 
+
     public void schedulePollTask(@Nonnull Plugin plugin,
                                  @Nonnull BukkitScheduler scheduler,
                                  int elementsPerTick,
@@ -61,7 +62,12 @@ public class TickUtil<T> {
             this.task.cancel();
         }
         this.task = scheduler.runTaskTimer(plugin,
-                () -> handler.accept(pollElements(elementsPerTick)),
+                () -> {
+                    List<T> elements = pollElements(elementsPerTick);
+                    if (!elements.isEmpty()) {
+                        this.handler.accept(elements);
+                    }
+                },
                 intervalTicks,
                 intervalTicks);
     }

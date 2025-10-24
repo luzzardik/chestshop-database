@@ -7,6 +7,7 @@ import io.github.md5sha256.chestshopdatabase.model.HydratedShop;
 import io.github.md5sha256.chestshopdatabase.util.BlockPosition;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +32,7 @@ public class ChestShopState {
                 .build();
     }
 
-    @Nonnull
+    @Nullable
     public Consumer<DatabaseInterface> flushTask() {
         List<HydratedShop> created = List.copyOf(this.createdShops.values());
         List<HydratedShop> updated = List.copyOf(this.updatedShops.values());
@@ -39,6 +40,9 @@ public class ChestShopState {
         toInsert.addAll(created);
         toInsert.addAll(updated);
         List<BlockPosition> deleted = List.copyOf(this.deletedShops);
+        if (deleted.isEmpty() && toInsert.isEmpty()) {
+            return null;
+        }
         this.createdShops.clear();
         this.updatedShops.clear();
         this.deletedShops.clear();

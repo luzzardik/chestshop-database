@@ -27,28 +27,15 @@ public interface MariaChestshopMapper extends DatabaseInterface {
     @Override
     void deleteOrphanedItems();
 
-    @Select("""
-            @item_code = #{item_code};
-            @item_bytes = #{item_bytes};
-            
+    @Select("""  
             INSERT INTO Item (item_code, item_bytes)
-            VALUES (@item_code, @item_bytes)
-            ON DUPLICATE KEY UPDATE item_bytes = @item_bytes
+            VALUES (#{item_code}, #{item_bytes})
+            ON DUPLICATE KEY UPDATE item_bytes = VALUES(item_bytes);
             """)
     @Override
     void insertItem(@Param("item_code") String itemCode, @Param("item_bytes") byte[] itemBytes);
 
     @Insert("""
-            @world_uuid = #{world_uuid};
-            @x = #{x};
-            @y = #{y};
-            @z = #{z};
-            @item_code = #{item_code};
-            @owner_name = #{owner_name};
-            @buy_price = #{buy_price};
-            @sell_price = #{sell_price};
-            @quantity = #{quantity};
-            @stock = #{stock};
             INSERT INTO Shop (world_uuid,
                               pos_x,
                               pos_y,
@@ -59,13 +46,22 @@ public interface MariaChestshopMapper extends DatabaseInterface {
                               sell_price,
                               quantity,
                               stock)
-            VALUES (@world_uuid, @x, @y, @z, @item_code, @owner_name, @buy_price, @sell_price, @quantity, @stock)
-            ON DUPLICATE KEY UPDATE item_code  = @item_code,
-                                    owner_name = @owner_name,
-                                    buy_price  = @buy_price,
-                                    sell_price = @sell_price,
-                                    quantity   = @quantity
-                                    stock      = @stock
+            VALUES (CAST(#{world_uuid} AS UUID),
+                    #{x},
+                    #{y},
+                    #{z},
+                    #{item_code},
+                    #{owner_name},
+                    #{buy_price},
+                    #{sell_price},
+                    #{quantity},
+                    #{stock})
+            ON DUPLICATE KEY UPDATE item_code  = VALUES(item_code),
+                                    owner_name = VALUES(owner_name),
+                                    buy_price  = VALUES(buy_price),
+                                    sell_price = VALUES(sell_price),
+                                    quantity   = VALUES(quantity),
+                                    stock      = VALUES(stock)
             """)
     @Override
     void insertShop(
@@ -83,7 +79,7 @@ public interface MariaChestshopMapper extends DatabaseInterface {
     @Override
     @Delete("""
             DELETE FROM Shop
-            WHERE world_uuid = #{world_uuid} AND pos_x = #{x} AND pos_y = #{y} AND pos_z = #{z}
+            WHERE world_uuid = CAST(#{world_uuid} AS UUID) AND pos_x = #{x} AND pos_y = #{y} AND pos_z = #{z}
             """)
     void deleteShopByPos(
             @Param("world_uuid") @Nonnull UUID world,

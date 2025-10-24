@@ -46,8 +46,13 @@ public final class ChestshopDatabasePlugin extends JavaPlugin {
     private void scheduleTasks(@Nonnull SqlSessionFactory sessionFactory) {
         BukkitScheduler scheduler = getServer().getScheduler();
         Logger logger = getLogger();
+        long interval = 1;
         scheduler.runTaskTimer(this, () -> {
             Consumer<DatabaseInterface> flushTask = shopState.flushTask();
+            if (flushTask == null) {
+                return;
+            }
+            logger.info("Beginning flush task...");
             CompletableFuture.runAsync(() -> {
                 try (SqlSession session = sessionFactory.openSession(false)) {
                     DatabaseInterface databaseInterface = session.getMapper(MariaChestshopMapper.class);
@@ -57,8 +62,10 @@ public final class ChestshopDatabasePlugin extends JavaPlugin {
                     logger.severe("Failed to flush shop state to database!");
                     ex.printStackTrace();
                 }
+                logger.info("Flush task complete!");
             });
-        }, 20, 20);
+        }, interval, interval);
+        this.discoverer.schedulePollTask(this, scheduler, 20, 5);
     }
 
     @Override

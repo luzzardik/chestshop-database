@@ -13,7 +13,7 @@ public class InventoryUtil {
         int count = 0;
         while (iterator.hasNext()) {
             ItemStack item = iterator.next();
-            if (!item.isEmpty() && item.equals(itemStack)) {
+            if (item != null && !item.isEmpty() && item.equals(itemStack)) {
                 count += item.getAmount();
             }
         }

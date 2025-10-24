@@ -44,9 +44,9 @@ public record ChestShopListener(
     }
 
     private void toHydratedShop(@Nonnull Sign sign,
+                                @Nonnull String[] lines,
                                 @Nonnull Container container,
                                 Consumer<HydratedShop> callback) {
-        String[] lines = sign.getLines();
         UUID world = sign.getWorld().getUID();
         int posX = sign.getX();
         int posY = sign.getY();
@@ -82,11 +82,12 @@ public record ChestShopListener(
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onChestShopCreated(ShopCreatedEvent event) {
         Sign sign = event.getSign();
+        String[] lines = event.getSignLines();
         Container container = uBlock.findConnectedContainer(sign);
         if (container == null) {
             return;
         }
-        toHydratedShop(sign, container, this.shopState::queueShopCreation);
+        toHydratedShop(sign, lines, container, this.shopState::queueShopCreation);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -111,7 +112,7 @@ public record ChestShopListener(
         int posY = sign.getY();
         int posZ = sign.getZ();
         if (!this.shopState.cachedShopRegistered(new BlockPosition(world, posX, posY, posZ))) {
-            toHydratedShop(sign, container, this.shopState::queueShopCreation);
+            toHydratedShop(sign, sign.getLines(), container, this.shopState::queueShopCreation);
         }
     }
 
