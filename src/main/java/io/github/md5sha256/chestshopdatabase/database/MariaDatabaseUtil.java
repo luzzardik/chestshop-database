@@ -23,7 +23,8 @@ public class MariaDatabaseUtil {
                         buy_price AS buyPrice,
                         sell_price AS sellPrice,
                         quantity,
-                        stock
+                        stock,
+                        estimated_capacity AS estimatedCapacity
                         """)
                 .FROM("Shop")
                 .WHERE("item_code = #{item_code}")
@@ -48,7 +49,8 @@ public class MariaDatabaseUtil {
                         buy_price AS buyPrice,
                         sell_price AS sellPrice,
                         quantity,
-                        stock
+                        stock,
+                        estimated_capacity AS estimatedCapacity
                         """)
                 .FROM("Shop")
                 .WHERE("item_code = #{item_code}",
@@ -82,6 +84,7 @@ public class MariaDatabaseUtil {
                                 sell_price AS sellPrice,
                                 quantity,
                                 stock,
+                                estimated_capacity AS estimatedCapacity,
                                 #{distance} * #{distance} AS distanceSquared
                                 """)
                         .FROM("Shop")

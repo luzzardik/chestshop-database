@@ -63,6 +63,10 @@ public record FindShopsCommand(@Nonnull ChestShopState shopState,
         return price == null ? "N/A" : price.toString();
     }
 
+    private String capacityToString(int cap) {
+        return cap == -1 ? "infinity" : String.valueOf(cap);
+    }
+
     private Component formatShop(@Nonnull Shop shop) {
         return Component.text()
                 .append(Component.text("Owner: " + shop.ownerName() + ",", NamedTextColor.GREEN))
@@ -76,6 +80,8 @@ public record FindShopsCommand(@Nonnull ChestShopState shopState,
                 .appendNewline()
                 .append(Component.text(String.format("Stock: %d", shop.stock()),
                         NamedTextColor.YELLOW))
+                .appendNewline()
+                .append(Component.text(String.format("Remaining Capacity: %s", capacityToString(shop.remainingCapacity())), NamedTextColor.YELLOW))
                 .appendNewline()
                 .append(Component.text(String.format("Location: %d, %d, %d",
                         shop.posX(),

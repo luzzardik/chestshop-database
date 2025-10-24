@@ -41,6 +41,7 @@ public record ChestShopDatabase(@Nonnull ChestShopState shopState) {
                 sellPriceDecimal);
         int quantity = ChestShopSign.getQuantity(lines);
         int stock = InventoryUtil.countItems(itemStack, container.getInventory());
+        int capacity = InventoryUtil.remainingCapacity(itemStack, container.getInventory());
         HydratedShop shop = new HydratedShop(
                 position.world(),
                 position.x(),
@@ -51,7 +52,8 @@ public record ChestShopDatabase(@Nonnull ChestShopState shopState) {
                 buyPrice,
                 sellPrice,
                 quantity,
-                stock);
+                stock,
+                capacity);
         this.shopState.queueShopCreation(shop);
     }
 

@@ -16,7 +16,8 @@ public record Shop(
         @Nullable Double buyPrice,
         @Nullable Double sellPrice,
         int quantity,
-        int stock
+        int stock,
+        int estimatedCapacity
 ) {
 
     public Shop {
@@ -28,5 +29,9 @@ public record Shop(
     @Nonnull
     public BlockPosition blockPosition() {
         return new BlockPosition(this.worldId, this.posX, this.posY, this.posZ);
+    }
+
+    public int remainingCapacity() {
+        return this.estimatedCapacity == -1 ? -1 : this.estimatedCapacity - stock;
     }
 }

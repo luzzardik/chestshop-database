@@ -72,7 +72,8 @@ public record ChestShopListener(
                     buyPrice,
                     sellPrice,
                     quantity,
-                    InventoryUtil.countItems(itemStack, container.getInventory())
+                    InventoryUtil.countItems(itemStack, container.getInventory()),
+                    InventoryUtil.remainingCapacity(itemStack, container.getInventory())
             );
             callback.accept(shop);
         });

@@ -51,7 +51,8 @@ public interface MariaChestshopMapper extends DatabaseMapper {
                               buy_price,
                               sell_price,
                               quantity,
-                              stock)
+                              stock,
+                              estimated_capacity)
             VALUES (CAST(#{world_uuid} AS UUID),
                     #{x},
                     #{y},
@@ -61,13 +62,15 @@ public interface MariaChestshopMapper extends DatabaseMapper {
                     #{buy_price},
                     #{sell_price},
                     #{quantity},
-                    #{stock})
-            ON DUPLICATE KEY UPDATE item_code  = VALUES(item_code),
-                                    owner_name = VALUES(owner_name),
-                                    buy_price  = VALUES(buy_price),
-                                    sell_price = VALUES(sell_price),
-                                    quantity   = VALUES(quantity),
-                                    stock      = VALUES(stock)
+                    #{stock},
+                    #{capacity})
+            ON DUPLICATE KEY UPDATE item_code          = VALUES(item_code),
+                                    owner_name         = VALUES(owner_name),
+                                    buy_price          = VALUES(buy_price),
+                                    sell_price         = VALUES(sell_price),
+                                    quantity           = VALUES(quantity),
+                                    stock              = VALUES(stock),
+                                    estimated_capacity = VALUES(estimated_capacity)
             """)
     void insertShop(
             @Param("world_uuid") @Nonnull UUID worldUUID,
@@ -79,7 +82,8 @@ public interface MariaChestshopMapper extends DatabaseMapper {
             @Param("buy_price") @Nullable Double buyPrice,
             @Param("sell_price") @Nullable Double sellPrice,
             @Param("quantity") int quantity,
-            @Param("stock") int stock);
+            @Param("stock") int stock,
+            @Param("capacity") int estimatedCapacity);
 
     @Override
     @Delete("""

@@ -46,7 +46,8 @@ public interface DatabaseMapper {
             @Nullable Double buyPrice,
             @Nullable Double sellPrice,
             int quantity,
-            int stock);
+            int stock,
+            int estimatedCapacity);
 
     default void insertShop(@Nonnull Shop shop) {
         insertShop(shop.worldId(),
@@ -58,7 +59,8 @@ public interface DatabaseMapper {
                 shop.buyPrice(),
                 shop.sellPrice(),
                 shop.quantity(),
-                shop.stock());
+                shop.stock(),
+                shop.estimatedCapacity());
     }
 
 
@@ -72,7 +74,8 @@ public interface DatabaseMapper {
                 shop.buyPrice(),
                 shop.sellPrice(),
                 shop.quantity(),
-                shop.stock());
+                shop.stock(),
+                shop.estimatedCapacity());
     }
 
     default void insertShops(@Nonnull List<HydratedShop> shops) {

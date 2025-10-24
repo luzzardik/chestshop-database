@@ -13,11 +13,26 @@ public class InventoryUtil {
         int count = 0;
         while (iterator.hasNext()) {
             ItemStack item = iterator.next();
-            if (item != null && !item.isEmpty() && item.equals(itemStack)) {
+            if (item != null && !item.isEmpty() && item.isSimilar(itemStack)) {
                 count += item.getAmount();
             }
         }
         return count;
+    }
+
+    public static int remainingCapacity(@Nonnull ItemStack itemStack, @Nonnull Inventory inventory) {
+        int stackSize = Math.min(itemStack.getMaxStackSize(), inventory.getMaxStackSize());
+        Iterator<ItemStack> iterator = inventory.iterator();
+        int capacity = 0;
+        while (iterator.hasNext()) {
+            ItemStack item = iterator.next();
+            if (item == null || item.isEmpty()) {
+                capacity += stackSize;
+            } else if (item.isSimilar(itemStack)) {
+                capacity += stackSize - item.getAmount();
+            }
+        }
+        return capacity;
     }
 
 }
