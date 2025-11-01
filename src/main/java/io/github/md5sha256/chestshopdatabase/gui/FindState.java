@@ -35,6 +35,7 @@ public class FindState {
             @Nonnull Map<ShopAttribute, Comparator<Shop>> comparators) {
         this.item = item;
         this.comparators.putAll(comparators);
+        reset();
     }
 
     public FindState(@Nonnull FindState other) {

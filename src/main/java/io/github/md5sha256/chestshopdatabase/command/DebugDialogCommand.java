@@ -40,7 +40,6 @@ public record DebugDialogCommand(
                             new ChestshopItem(ItemStack.of(Material.DIAMOND), "Diamond"),
                             new ShopComparators().withDistance(blockPos).build()
                     );
-                    findState.reset();
                     Dialog dialog = FindDialog.createMainPageDialog(findState, taskFactory, gui);
                     player.showDialog(dialog);
                     return Command.SINGLE_SUCCESS;
