@@ -43,6 +43,7 @@ public class FindDialog {
 
     private static DialogBase waitScreenBase() {
         return DialogBase.builder(Component.text("Chest Shop Query"))
+                .afterAction(DialogBase.DialogAfterAction.CLOSE)
                 .canCloseWithEscape(true)
                 .body(List.of(DialogBody.plainMessage(Component.text("Querying..."))))
                 .build();
@@ -55,15 +56,14 @@ public class FindDialog {
             @Nonnull ShopResultsGUI resultsGUI
     ) {
         DialogAction submitAction = DialogAction.customClick((view, audience) -> {
-            audience.closeDialog();
             audience.showDialog(waitScreen());
             if (!(audience instanceof Player player)) {
                 return;
             }
             taskFactory.findTask(findState).whenComplete((res, ex) -> {
+                audience.closeDialog();
                 if (ex != null) {
                     ex.printStackTrace();
-                    audience.closeDialog();
                     audience.sendMessage(Component.text("Internal error when querying shops!",
                             NamedTextColor.RED));
                     return;
@@ -94,14 +94,14 @@ public class FindDialog {
                                 findState,
                                 () -> createMainPageDialog(findState, taskFactory, resultsGUI))))
                         .build(),
-                exitButton
+                submitButton
         );
 
         return Dialog.create(factory ->
                 factory.empty()
                         .base(createMainPageBase(findState.item().itemStack()))
                         .type(DialogType.multiAction(actions)
-                                .exitAction(submitButton)
+                                .exitAction(exitButton)
                                 .columns(1)
                                 .build()));
     }

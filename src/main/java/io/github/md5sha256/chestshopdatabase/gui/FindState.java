@@ -26,7 +26,7 @@ public class FindState {
 
     private static final int NUM_SHOP_TYPES = ShopType.values().length;
 
-    private final EnumSet<ShopType> shopTypes = EnumSet.allOf(ShopType.class);
+    private final EnumSet<ShopType> shopTypes = EnumSet.noneOf(ShopType.class);
     private final Map<ShopAttribute, ShopAttributeMeta> attributeMeta = new EnumMap<>(
             ShopAttribute.class);
     private final Map<ShopAttribute, Comparator<Shop>> comparators = new EnumMap<>(ShopAttribute.class);

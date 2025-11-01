@@ -41,7 +41,7 @@ public class FilterDialog {
         Set<ShopType> includedTypes = state.shopTypes();
         ActionButton saveButton = ActionButton.builder(Component.text("Save"))
                 .tooltip(Component.text("Save selection and return to previous menu"))
-                .action(DialogAction.customClick(applyFilters(state),
+                .action(DialogAction.customClick(applyFilters(state, prevDialog),
                         DialogUtil.DEFAULT_CALLBACK_OPTIONS))
                 .build();
         ActionButton backButton = ActionButton.builder(Component.text("Back"))
@@ -55,7 +55,8 @@ public class FilterDialog {
         );
     }
 
-    private static DialogActionCallback applyFilters(@Nonnull FindState findState) {
+    private static DialogActionCallback applyFilters(@Nonnull FindState findState,
+                                                     @Nonnull Supplier<Dialog> prevDialog) {
         return (view, audience) -> {
             Set<ShopType> included = EnumSet.noneOf(ShopType.class);
             for (ShopType shopType : ShopType.values()) {
@@ -65,7 +66,7 @@ public class FilterDialog {
                 }
             }
             findState.setShopTypes(included);
-            audience.closeDialog();
+            audience.showDialog(prevDialog.get());
         };
     }
 
