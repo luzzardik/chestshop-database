@@ -45,16 +45,7 @@ public class WorldEditHandler implements Listener {
         }, 20, 20);
     }
 
-    private boolean isSupported() {
-        return (Bukkit.getPluginManager()
-                .getPlugin("WorldEdit") != null || Bukkit.getPluginManager()
-                .getPlugin("FastAsyncWorldEdit") != null);
-    }
-
     private void initialize() {
-        if (!isSupported()) {
-            return;
-        }
         WorldEdit.getInstance().getEventBus().register(this);
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         isFAWE = (Bukkit.getServer().getPluginManager().getPlugin("FastAsyncWorldEdit") != null);

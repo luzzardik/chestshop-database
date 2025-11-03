@@ -17,6 +17,8 @@ import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -76,7 +78,9 @@ public final class ChestshopDatabasePlugin extends JavaPlugin {
         cacheItemCodes(sessionFactory);
         registerCommands(sessionFactory);
         scheduleTasks(sessionFactory);
-        new WorldEditHandler(this, this.shopState);
+        if (isWorldeditPresent()) {
+            new WorldEditHandler(this, this.shopState);
+        }
     }
 
     @Override
@@ -89,6 +93,12 @@ public final class ChestshopDatabasePlugin extends JavaPlugin {
             ex.printStackTrace();
         }
         getLogger().info("Plugin disabled");
+    }
+
+    private boolean isWorldeditPresent() {
+        PluginManager pluginManager = getServer().getPluginManager();
+            return pluginManager.getPlugin("WorldEdit") != null
+                    || pluginManager.getPlugin("FastAsyncWorldEdit") != null;
     }
 
     private void registerCommands(@Nonnull SqlSessionFactory sessionFactory) {
