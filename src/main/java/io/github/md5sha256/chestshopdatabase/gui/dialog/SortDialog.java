@@ -17,7 +17,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -27,10 +26,6 @@ public class SortDialog {
     public static Dialog createSortDialog(@Nonnull FindState findState,
                                           @Nonnull Supplier<Dialog> prevDialog) {
         var buttons = List.of(
-                ActionButton.builder(Component.text("Attributes"))
-                        .action(DialogUtil.openDialogAction(() -> createAttributeSelectionDialog(
-                                findState, () -> createSortDialog(findState, prevDialog))))
-                        .build(),
                 ActionButton.builder(Component.text("Sorting Direction"))
                         .action(DialogUtil.openDialogAction(() -> createSortDirectionDialog(
                                 findState, () -> createSortDialog(findState, prevDialog))))
@@ -50,25 +45,6 @@ public class SortDialog {
                         .columns(1)
                         .exitAction(backButton)
                         .build()));
-    }
-
-    private static Dialog createAttributeSelectionDialog(@Nonnull FindState findState,
-                                                         @Nonnull Supplier<Dialog> prevDialog) {
-        var saveButton = ActionButton.builder(Component.text("Save"))
-                .action(DialogAction.customClick(applyShopAttributesSelection(findState,
-                                prevDialog),
-                        DialogUtil.DEFAULT_CALLBACK_OPTIONS))
-                .tooltip(Component.text("Save selection and return to the previous menu"))
-                .build();
-
-        var backButton = ActionButton.builder(Component.text("Back"))
-                .tooltip(Component.text("Return to the previous menu"))
-                .action(DialogUtil.openDialogAction(prevDialog)).build();
-
-        return Dialog.create(factory ->
-                factory.empty().base(selectShopAttributesBase())
-                        .type(DialogType.confirmation(saveButton, backButton))
-        );
     }
 
     private static Dialog createSortDirectionDialog(@Nonnull FindState findState,
@@ -126,12 +102,14 @@ public class SortDialog {
     @Nonnull
     private static DialogBase setSortingDirectionBase(@Nonnull List<ShopAttribute> attributes) {
         var options = List.of(SingleOptionDialogInput.OptionEntry.create("ascending",
-                        Component.text("Ascending", NamedTextColor.GREEN),
+                        Component.text("Ascending", NamedTextColor.AQUA),
                         true),
                 SingleOptionDialogInput.OptionEntry.create("descending",
-                        Component.text("Descending", NamedTextColor.RED),
+                        Component.text("Descending", NamedTextColor.BLUE),
+                        false),
+                SingleOptionDialogInput.OptionEntry.create("disabled",
+                        Component.text("Off", NamedTextColor.RED),
                         false));
-
 
         var directions = attributes.stream().map(attribute ->
                 DialogInput.singleOption(attribute.name(),
@@ -141,18 +119,6 @@ public class SortDialog {
         ).toList();
         return DialogBase.builder(Component.text("Set Sorting Directions"))
                 .inputs(directions)
-                .build();
-    }
-
-    @Nonnull
-    private static DialogBase selectShopAttributesBase() {
-        var inputs = Arrays.stream(ShopAttribute.values()).map(attribute ->
-                DialogInput.bool(attribute.name(), Component.text(attribute.displayName()))
-                        .initial(true)
-                        .build()
-        ).toList();
-        return DialogBase.builder(Component.text("Select Shop Attributes"))
-                .inputs(inputs)
                 .build();
     }
 
@@ -173,32 +139,19 @@ public class SortDialog {
     }
 
     @Nonnull
-    private static DialogActionCallback applyShopAttributesSelection(@Nonnull FindState findState,
-                                                                     @Nonnull Supplier<Dialog> prevDialog) {
-        return (view, audience) -> {
-            for (ShopAttribute attribute : ShopAttribute.values()) {
-                Boolean value = view.getBoolean(attribute.name());
-                if (value == null) {
-                    findState.clearShopAttributeMeta(attribute);
-                } else {
-                    findState.addShopAttributeMeta(attribute);
-                }
-            }
-            audience.showDialog(prevDialog.get());
-        };
-    }
-
-    @Nonnull
     private static DialogActionCallback applyShopAttributeSortDirections(@Nonnull FindState findState,
                                                                          @Nonnull Supplier<Dialog> prevDialog) {
         return (view, audience) -> {
             for (ShopAttribute attribute : ShopAttribute.values()) {
-                Boolean value = view.getBoolean(attribute.name());
-                if (value == null) {
-                    continue;
+                String option = view.getText(attribute.name());
+                if (option == null) {
+                    findState.clearShopAttributeMeta(attribute);
                 }
-                findState.setSortDirection(attribute,
-                        value ? SortDirection.ASCENDING : SortDirection.DESCENDING);
+                 else if (option.equals("ascending")) {
+                    findState.getOrCreate(attribute).sortDirection(SortDirection.ASCENDING);
+                } else if (option.equals("descending")) {
+                     findState.getOrCreate(attribute).sortDirection(SortDirection.DESCENDING);
+                }
             }
             audience.showDialog(prevDialog.get());
         };

@@ -4,7 +4,9 @@ import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
 import io.github.md5sha256.chestshopdatabase.database.FindTaskFactory;
 import io.github.md5sha256.chestshopdatabase.gui.FindState;
 import io.github.md5sha256.chestshopdatabase.gui.ShopResultsGUI;
+import io.github.md5sha256.chestshopdatabase.model.ChestshopItem;
 import io.github.md5sha256.chestshopdatabase.util.DialogUtil;
+import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.dialog.Dialog;
 import io.papermc.paper.registry.data.dialog.ActionButton;
 import io.papermc.paper.registry.data.dialog.DialogBase;
@@ -24,13 +26,20 @@ import java.util.List;
 public class FindDialog {
 
     @Nonnull
-    private static DialogBase createMainPageBase(@Nullable ItemStack searchQuery) {
-        var builder = DialogBase.builder(Component.text("Find ChestShops"))
-                .canCloseWithEscape(true);
-        if (searchQuery == null) {
-            return builder.build();
+    private static DialogBase createMainPageBase(@Nullable ChestshopItem item) {
+        if (item == null) {
+            return DialogBase.builder(Component.text("Find ChestShops"))
+                    .canCloseWithEscape(true).build();
         }
-        return builder.body(List.of(DialogBody.item(searchQuery).build())).build();
+        ItemStack itemStack = item.itemStack();
+        Component name = itemStack.getDataOrDefault(DataComponentTypes.CUSTOM_NAME,
+                itemStack.effectiveName());
+        var builder = DialogBase.builder(Component.text("Find ChestShops for ").append(name))
+                .canCloseWithEscape(true);
+
+        var nameBody = DialogBody.plainMessage(name);
+        var itemBody = DialogBody.item(item.itemStack()).build();
+        return builder.body(List.of(itemBody, nameBody)).build();
     }
 
     private static Dialog waitScreen() {
@@ -77,7 +86,7 @@ public class FindDialog {
                 chestGui.show(player);
             });
         }, ClickCallback.Options.builder().uses(1).build());
-        ActionButton submitButton = ActionButton.builder(Component.text("Submit Query"))
+        ActionButton submitButton = ActionButton.builder(Component.text("Search"))
                 .action(submitAction)
                 .build();
         ActionButton exitButton = ActionButton.builder(Component.text("Exit"))
@@ -99,7 +108,7 @@ public class FindDialog {
 
         return Dialog.create(factory ->
                 factory.empty()
-                        .base(createMainPageBase(findState.item().itemStack()))
+                        .base(createMainPageBase(findState.item()))
                         .type(DialogType.multiAction(actions)
                                 .exitAction(exitButton)
                                 .columns(1)

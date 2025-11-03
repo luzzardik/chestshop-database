@@ -5,7 +5,6 @@ import io.github.md5sha256.chestshopdatabase.model.Shop;
 import io.github.md5sha256.chestshopdatabase.model.ShopAttribute;
 import io.github.md5sha256.chestshopdatabase.model.ShopType;
 import io.github.md5sha256.chestshopdatabase.util.SortDirection;
-import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -82,8 +81,8 @@ public class FindState {
         return Optional.ofNullable(this.world);
     }
 
-    public void addShopAttributeMeta(@Nonnull ShopAttribute attribute) {
-        this.attributeMeta.put(attribute, new ShopAttributeMeta(attribute));
+    public ShopAttributeMeta getOrCreate(@Nonnull ShopAttribute attribute) {
+        return this.attributeMeta.computeIfAbsent(attribute, ShopAttributeMeta::new);
     }
 
     public void clearShopAttributeMeta(@Nonnull ShopAttribute attribute) {

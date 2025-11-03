@@ -9,8 +9,10 @@ import io.papermc.paper.registry.data.dialog.DialogBase;
 import io.papermc.paper.registry.data.dialog.action.DialogAction;
 import io.papermc.paper.registry.data.dialog.action.DialogActionCallback;
 import io.papermc.paper.registry.data.dialog.input.DialogInput;
+import io.papermc.paper.registry.data.dialog.input.SingleOptionDialogInput;
 import io.papermc.paper.registry.data.dialog.type.DialogType;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -23,9 +25,16 @@ public class FilterDialog {
 
     @Nonnull
     private static DialogBase createShopFiltersBase(@Nonnull Set<ShopType> includedTypes) {
+        var options = List.of(SingleOptionDialogInput.OptionEntry.create("enabled",
+                        Component.text("On", NamedTextColor.GREEN),
+                        true),
+                SingleOptionDialogInput.OptionEntry.create("disabled",
+                        Component.text("Off", NamedTextColor.RED),
+                        false));
         List<? extends DialogInput> inputs = Arrays.stream(ShopType.values())
-                .map(type -> DialogInput.bool(type.name(), Component.text(type.displayName()))
-                        .initial(includedTypes.contains(type))
+                .map(type -> DialogInput.singleOption(type.name(),
+                                Component.text(type.displayName()),
+                                options)
                         .build())
                 .toList();
 
@@ -60,8 +69,8 @@ public class FilterDialog {
         return (view, audience) -> {
             Set<ShopType> included = EnumSet.noneOf(ShopType.class);
             for (ShopType shopType : ShopType.values()) {
-                Boolean value = view.getBoolean(shopType.name());
-                if (value != null && value) {
+                String value = view.getText(shopType.name());
+                if (value != null && value.equals("enabled")) {
                     included.add(shopType);
                 }
             }
