@@ -11,6 +11,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,12 +55,14 @@ public class ItemDiscoverer {
             ItemParseEvent parseEvent = new ItemParseEvent(code);
             pluginManager.callEvent(parseEvent);
             ItemStack itemStack = parseEvent.getItem();
-            this.cachedItemCodes.put(code, itemStack);
+            if (itemStack != null) {
+                this.cachedItemCodes.put(code, itemStack);
+            }
             triggerCallbacks(code, itemStack);
         }
     }
 
-    private void triggerCallbacks(@Nonnull String code, @Nonnull ItemStack itemStack) {
+    private void triggerCallbacks(@Nonnull String code, @Nullable ItemStack itemStack) {
         List<Consumer<ItemStack>> consumers = this.callbacks.remove(code);
         if (consumers != null) {
             consumers.forEach(consumer -> consumer.accept(itemStack));
