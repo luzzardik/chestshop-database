@@ -1,1 +1,11 @@
 rootProject.name = "chestshop-database"
+
+// Adapters
+include(":adapters:worldedit")
+include(":adapters:fawe")
+
+// Core
+include(":core")
+
+// Main project
+include(":chestshop-database-bukkit")
