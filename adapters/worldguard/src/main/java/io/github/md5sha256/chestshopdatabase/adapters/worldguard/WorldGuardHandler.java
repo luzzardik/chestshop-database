@@ -19,17 +19,18 @@ import java.util.Optional;
 public class WorldGuardHandler {
     private final Plugin plugin;
     private final ReplacementRegistry replacementRegistry;
+    private final WorldGuard worldGuard;
 
     public WorldGuardHandler (@NotNull Plugin plugin, @NotNull ReplacementRegistry replacementRegistry) {
         this.plugin = plugin;
         this.replacementRegistry = replacementRegistry;
+        this.worldGuard = WorldGuard.getInstance();
         initialize();
     }
 
     private void initialize () {
         replacementRegistry.stringReplacement("region-name", (shop) -> {
             // Get WorldGuard instance & platform
-            WorldGuard worldGuard = WorldGuard.getInstance();
             if (worldGuard == null) return "N/A";
             WorldGuardPlatform worldGuardPlatform = worldGuard.getPlatform();
             if (worldGuardPlatform == null) return "N/A";
