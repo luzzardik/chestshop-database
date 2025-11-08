@@ -11,6 +11,7 @@ import io.github.md5sha256.chestshopdatabase.ChestShopState;
 import io.github.md5sha256.chestshopdatabase.ItemDiscoverer;
 import io.github.md5sha256.chestshopdatabase.model.ChestshopItem;
 import io.github.md5sha256.chestshopdatabase.model.HydratedShop;
+import io.github.md5sha256.chestshopdatabase.model.ShopStockUpdate;
 import io.github.md5sha256.chestshopdatabase.util.BlockPosition;
 import io.github.md5sha256.chestshopdatabase.util.InventoryUtil;
 import io.github.md5sha256.chestshopdatabase.util.UnsafeChestShopSign;
@@ -83,6 +84,32 @@ public record ChestShopListener(
         });
     }
 
+    private void toUpdateShopStock(@NotNull Sign sign,
+                                @NotNull String[] lines,
+                                @NotNull Container container,
+                                Consumer<ShopStockUpdate> callback) {
+        UUID world = sign.getWorld().getUID();
+        int posX = sign.getX();
+        int posY = sign.getY();
+        int posZ = sign.getZ();
+        String itemCode = ChestShopSign.getItem(lines);
+        this.discoverer.discoverItemStackFromCode(itemCode, itemStack -> {
+            if (itemStack == null || itemStack.isEmpty()) {
+                // FIXME log warning
+                return;
+            }
+            ShopStockUpdate shopStockUpdate = new ShopStockUpdate(
+                    world,
+                    posX,
+                    posY,
+                    posZ,
+                    InventoryUtil.countItems(itemStack, container.getInventory()),
+                    InventoryUtil.remainingCapacity(itemStack, container.getInventory())
+            );
+            callback.accept(shopStockUpdate);
+        });
+    }
+
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onChestShopCreated(ShopCreatedEvent event) {
@@ -118,6 +145,8 @@ public record ChestShopListener(
         int posZ = sign.getZ();
         if (!this.shopState.cachedShopRegistered(new BlockPosition(world, posX, posY, posZ))) {
             toHydratedShop(sign, sign.getLines(), container, this.shopState::queueShopCreation);
+        } else {
+            toUpdateShopStock(sign, sign.getLines(), container, this.shopState::queueShopUpdate);
         }
     }
 

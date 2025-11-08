@@ -1,6 +1,7 @@
 package io.github.md5sha256.chestshopdatabase;
 
 import io.github.md5sha256.chestshopdatabase.model.HydratedShop;
+import io.github.md5sha256.chestshopdatabase.model.ShopStockUpdate;
 import io.github.md5sha256.chestshopdatabase.util.BlockPosition;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,7 +15,7 @@ public interface ChestShopState {
 
     void queueShopCreation(@NotNull HydratedShop shop);
 
-    void queueShopUpdate(@NotNull HydratedShop shop);
+    void queueShopUpdate(@NotNull ShopStockUpdate shop);
 
     void queueShopDeletion(@NotNull BlockPosition position);
 }

@@ -4,6 +4,7 @@ import io.github.md5sha256.chestshopdatabase.model.ChestshopItem;
 import io.github.md5sha256.chestshopdatabase.model.HydratedShop;
 import io.github.md5sha256.chestshopdatabase.model.Shop;
 import io.github.md5sha256.chestshopdatabase.model.ShopType;
+import io.github.md5sha256.chestshopdatabase.model.ShopStockUpdate;
 import io.github.md5sha256.chestshopdatabase.util.BlockPosition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -99,6 +100,17 @@ public interface DatabaseMapper {
 
     @NotNull
     List<BlockPosition> selectShopsPositionsByWorld(@NotNull UUID world);
+
+    void updateShop (@NotNull UUID world, int x, int y, int z, int stock, int estimatedCapacity);
+
+    default void updateShop (@NotNull ShopStockUpdate stockUpdate) {
+        updateShop(stockUpdate.worldUUID(), stockUpdate.x(), stockUpdate.y(), stockUpdate.z(), stockUpdate.stock(), stockUpdate.estimatedCapacity());
+    }
+
+    default void updateShops (@NotNull List<ShopStockUpdate> stockUpdates) {
+        stockUpdates.forEach(this::updateShop);
+        flushSession();
+    }
 
     void flushSession();
 }
